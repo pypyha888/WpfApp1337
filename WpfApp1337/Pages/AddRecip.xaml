@@ -1,0 +1,44 @@
+﻿<Page x:Class="WpfApp1337.Pages.AddRecip"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Редактирование товара"
+      Width="460" Height="360">
+    <Grid Margin="16" Background="#F4F6F8">
+        <Border Background="White" CornerRadius="8" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Название:" Grid.Row="0" Grid.Column="0" Margin="0,0,8,8"/>
+                <TextBox x:Name="NameTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <TextBlock Text="Категория:" Grid.Row="1" Grid.Column="0" Margin="0,0,8,8"/>
+                <ComboBox x:Name="CategoryComboBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,8" Height="30"/>
+
+                <TextBlock Text="Бренд:" Grid.Row="2" Grid.Column="0" Margin="0,0,8,8"/>
+                <TextBox x:Name="BrandTextBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <TextBlock Text="Цена:" Grid.Row="3" Grid.Column="0" Margin="0,0,8,8"/>
+                <TextBox x:Name="PriceTextBox" Grid.Row="3" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <TextBlock Text="Количество:" Grid.Row="4" Grid.Column="0" Margin="0,0,8,8"/>
+                <TextBox x:Name="QuantityTextBox" Grid.Row="4" Grid.Column="1" Margin="0,0,0,8"/>
+
+                <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Сохранить" Width="100" Height="32" Margin="0,0,8,0" Click="OnSaveClick"/>
+                    <Button Content="Отмена" Width="100" Height="32" Click="OnCancelClick"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
