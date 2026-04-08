@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,8 +8,6 @@ namespace WpfApp1337.Pages
 {
     public partial class Autorization : Page
     {
-        public event Action Logined;
-
         public Autorization()
         {
             InitializeComponent();
@@ -48,13 +46,15 @@ namespace WpfApp1337.Pages
                     txtLogin.Focus();
                     return;
                 }
-                else
-                {
-                    string welcomeMessage = $"Добро пожаловать, {wizard.UserName}!";
-                    MessageBox.Show(welcomeMessage, "Успешный вход", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Logined?.Invoke();
-                    ApplicationData.AppFrame.Navigate(new PageTask());
-                }
+
+                // Сохраняем текущего пользователя
+                AppConnect.CurrentUser = wizard;
+
+                MessageBox.Show($"Добро пожаловать, {wizard.UserName}!", "Успешный вход",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Навигация через Frame напрямую
+                AppFrame.frmMain.Navigate(new PageTask());
             }
             catch (Exception ex)
             {
@@ -65,7 +65,8 @@ namespace WpfApp1337.Pages
 
         private void btnReg_Click(object sender, RoutedEventArgs e)
         {
-              ApplicationData.AppFrame.Navigate(new RegistrationPage());
+            // Reg — правильное имя класса страницы регистрации
+            AppFrame.frmMain.Navigate(new Reg());
         }
     }
 }

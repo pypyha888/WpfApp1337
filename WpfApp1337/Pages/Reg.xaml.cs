@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +39,6 @@ namespace WpfApp1337.Pages
                 {
                     ShowMessage("Пароли не совпадают!", true);
                     PasswordBox.Focus();
-                    PasswordBox.SelectAll();
                     return;
                 }
 
@@ -53,7 +52,7 @@ namespace WpfApp1337.Pages
                 timer.Tick += (ts, te) =>
                 {
                     timer.Stop();
-                    ApplicationData.AppFrame.frmMain.GoBack();
+                    AppFrame.frmMain.GoBack();
                 };
                 timer.Start();
             }
@@ -77,28 +76,23 @@ namespace WpfApp1337.Pages
                 FullNameTextBox.Focus();
                 return false;
             }
-
             if (string.IsNullOrWhiteSpace(LoginTextBox.Text))
             {
                 ShowMessage("Введите логин!", true);
                 LoginTextBox.Focus();
                 return false;
             }
-
             if (string.IsNullOrWhiteSpace(PasswordBox.Password))
             {
                 ShowMessage("Введите пароль!", true);
                 PasswordBox.Focus();
                 return false;
             }
-
             return true;
         }
 
-        private bool DoPasswordsMatch()
-        {
-            return PasswordBox.Password == ConfirmPasswordBox.Password;
-        }
+        private bool DoPasswordsMatch() =>
+            PasswordBox.Password == ConfirmPasswordBox.Password;
 
         private bool ValidateInputData()
         {
@@ -108,7 +102,6 @@ namespace WpfApp1337.Pages
                 PasswordBox.Focus();
                 return false;
             }
-
             return true;
         }
 
@@ -116,9 +109,10 @@ namespace WpfApp1337.Pages
         {
             var newUser = new Users()
             {
-                Name = FullNameTextBox.Text.Trim(),
-                Login = LoginTextBox.Text.Trim(),
-                Password = PasswordBox.Password
+                UserName = FullNameTextBox.Text.Trim(),   // UserName, не Name!
+                Login    = LoginTextBox.Text.Trim(),
+                Password = PasswordBox.Password,
+                RoleId   = 3   // роль User по умолчанию
             };
 
             AppConnect.model01.Users.Add(newUser);
@@ -127,16 +121,16 @@ namespace WpfApp1337.Pages
 
         private void PasswordBoxes_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            bool passwordsMatch = DoPasswordsMatch();
+            bool match = DoPasswordsMatch();
 
-            if (!passwordsMatch && !string.IsNullOrEmpty(ConfirmPasswordBox.Password))
+            if (!match && !string.IsNullOrEmpty(ConfirmPasswordBox.Password))
             {
                 RegisterButton.IsEnabled = false;
                 ConfirmPasswordBox.Background = System.Windows.Media.Brushes.LightCoral;
                 ConfirmPasswordBox.BorderBrush = System.Windows.Media.Brushes.Red;
                 ConfirmPasswordBox.ToolTip = "Пароли не совпадают!";
             }
-            else if (passwordsMatch)
+            else if (match)
             {
                 RegisterButton.IsEnabled = true;
                 ConfirmPasswordBox.Background = System.Windows.Media.Brushes.LightGreen;
@@ -147,14 +141,12 @@ namespace WpfApp1337.Pages
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ApplicationData.AppFrame.frmMain.CanGoBack)
-                ApplicationData.AppFrame.frmMain.GoBack();
+            if (AppFrame.frmMain.CanGoBack)
+                AppFrame.frmMain.GoBack();
         }
 
-        private void ShowMessage(string message, bool isError)
-        {
+        private void ShowMessage(string message, bool isError) =>
             MessageBox.Show(message, isError ? "Ошибка" : "Успех",
                 MessageBoxButton.OK, isError ? MessageBoxImage.Error : MessageBoxImage.Information);
-        }
     }
 }

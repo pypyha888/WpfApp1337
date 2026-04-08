@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfApp1337.Pages;
 
 namespace WpfApp1337
 {
@@ -40,7 +41,7 @@ namespace WpfApp1337
         }
         private void LoadAuthorizationPage()
         {
-            FrmMain.Navigate(new Autorization()); 
+            FrmMain.Navigate(new Autorization());
         }
 
     }

@@ -1,17 +1,19 @@
-﻿using WpfApp1337.ApplicationData;
+using WpfApp1337.ApplicationData;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace WpfApp1337.Pages.AddRecip
+// Namespace и имя класса ДОЛЖНЫ совпадать с x:Class в AddRecip.xaml:
+// x:Class="WpfApp1337.Pages.AddRecip"
+namespace WpfApp1337.Pages
 {
-    public partial class ProductEditorPage : Page
+    public partial class AddRecip : Page
     {
         private Products _editingProduct;
         private bool _isEditMode;
 
-        public ProductEditorPage(Products product = null)
+        public AddRecip(Products product = null)
         {
             InitializeComponent();
 
@@ -70,13 +72,9 @@ namespace WpfApp1337.Pages.AddRecip
                     return;
 
                 if (_isEditMode)
-                {
                     UpdateProduct();
-                }
                 else
-                {
                     AddProduct();
-                }
 
                 NavigationService.GoBack();
             }
