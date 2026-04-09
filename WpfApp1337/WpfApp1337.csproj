@@ -10,21 +10,34 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Resources\**" />
-    <EmbeddedResource Remove="Resources\**" />
-    <None Remove="Resources\**" />
-    <Page Remove="Resources\**" />
+    <None Remove="Resources\no_image.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="353439-basket-buy-cart-ecommerce-online-purse-shop-shopping_107515.ico" />
   </ItemGroup>
 
-  <!-- Entity Framework Core для SQL Server -->
   <ItemGroup>
+    <!-- Папка для фотографий товаров -->
+    <Folder Include="Images\" />
+    <Folder Include="Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Entity Framework Core -->
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+
+    <!-- PDF генерация -->
+    <PackageReference Include="PdfSharp" Version="6.0.0" />
+
+    <!-- QR-код -->
+    <PackageReference Include="QRCoder" Version="1.4.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\no_image.png" />
   </ItemGroup>
 
 </Project>
