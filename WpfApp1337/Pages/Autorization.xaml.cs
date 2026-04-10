@@ -18,55 +18,32 @@ namespace WpfApp1337.Pages
             try
             {
                 if (string.IsNullOrWhiteSpace(txtLogin.Text))
-                {
-                    MessageBox.Show("Введите ваш логин!", "Внимание",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtLogin.Focus();
-                    return;
-                }
+                { MessageBox.Show("Введите логин!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); txtLogin.Focus(); return; }
 
                 if (string.IsNullOrWhiteSpace(txtPassword.Password))
-                {
-                    MessageBox.Show("Введите ваш пароль!", "Внимание",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    txtPassword.Focus();
-                    return;
-                }
+                { MessageBox.Show("Введите пароль!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); txtPassword.Focus(); return; }
 
-                var wizard = AppConnect.model01.Users
-                    .FirstOrDefault(x =>
-                        x.Login == txtLogin.Text &&
-                        x.Password == txtPassword.Password);
+                var user = AppConnect.model01.Users.FirstOrDefault(x =>
+                    x.Login == txtLogin.Text && x.Password == txtPassword.Password);
 
-                if (wizard == null)
+                if (user == null)
                 {
-                    MessageBox.Show("Неверный логин или пароль!\nПопробуйте снова.", "Ошибка входа",
+                    MessageBox.Show("Неверный логин или пароль!", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Error);
-                    txtPassword.Clear();
-                    txtLogin.Focus();
-                    return;
+                    txtPassword.Clear(); txtLogin.Focus(); return;
                 }
 
-                // Сохраняем текущего пользователя
-                AppConnect.CurrentUser = wizard;
-
-                MessageBox.Show($"Добро пожаловать, {wizard.UserName}!", "Успешный вход",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // Навигация через Frame напрямую
-                AppFrame.frmMain.Navigate(new PageTask());
+                AppConnect.CurrentUser = user;
+                AppFrame.frmMain.Navigate(new PageCatalog());
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Произошла ошибка при входе:\n{ex.Message}",
-                    "Сбой системы", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка входа:\n{ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void btnReg_Click(object sender, RoutedEventArgs e)
-        {
-            // Reg — правильное имя класса страницы регистрации
-            AppFrame.frmMain.Navigate(new Reg());
-        }
+            => AppFrame.frmMain.Navigate(new Reg());
     }
 }
