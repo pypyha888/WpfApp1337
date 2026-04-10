@@ -100,7 +100,7 @@
                                 <ComboBoxItem Content="2 — Менеджер"      Tag="2"/>
                                 <ComboBoxItem Content="3 — Покупатель"    Tag="3"/>
                             </ComboBox>
-                            <Button Grid.Column="4" Content="✅ Сохранить"
+                            <Button Grid.Column="4" Content="Сохранить"
                                     Width="110" Height="32"
                                     Background="#388E3C" Foreground="White"
                                     Click="OnSaveRoleClick"/>
