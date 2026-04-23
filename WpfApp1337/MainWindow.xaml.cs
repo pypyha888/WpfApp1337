@@ -1,20 +1,10 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfApp1337.Pages;
 
 namespace WpfApp1337
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -24,6 +14,7 @@ namespace WpfApp1337
             SetupNavigationSystem();
             LoadAuthorizationPage();
         }
+
         private void InitializeDatabaseConnection()
         {
             try
@@ -35,14 +26,35 @@ namespace WpfApp1337
                 MessageBox.Show($"Не удалось подключиться к базе данных:\n{ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void SetupNavigationSystem()
         {
             ApplicationData.AppFrame.frmMain = FrmMain;
+            FrmMain.Navigated += FrmMain_Navigated;
         }
+
+        private void FrmMain_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (e.Content is Autorization)
+            {
+                Width = 650;
+                Height = 550;
+                MinWidth = 480;
+                MinHeight = 380;
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            else if (e.Content is PageCatalog || e.Content is PageFavorites || e.Content is PageCart || e.Content is PageProfile || e.Content is PageAdmin)
+            {
+                Width = 1300;
+                Height = 750;
+                MinWidth = 900;
+                MinHeight = 550;
+            }
+        }
+
         private void LoadAuthorizationPage()
         {
             FrmMain.Navigate(new Autorization());
         }
-
     }
 }

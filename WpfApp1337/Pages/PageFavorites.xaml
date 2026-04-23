@@ -1,7 +1,6 @@
 <Page x:Class="WpfApp1337.Pages.PageFavorites"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Width="500" Height="500"
       Title="Избранное" Background="#F4F6F8">
     <Grid>
         <Grid.RowDefinitions>
