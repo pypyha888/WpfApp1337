@@ -26,7 +26,6 @@ namespace WpfApp1337.Pages
                 .ToList();
             CartGrid.ItemsSource = cart;
 
-            // EF6 Database First — TotalPrice это decimal, не nullable
             decimal total = cart.Sum(x => x.TotalPrice);
             TotalBlock.Text = $"Итого: {total:N0} руб.";
         }
@@ -54,7 +53,6 @@ namespace WpfApp1337.Pages
 
             try
             {
-                // EF6 Database First — UnitPrice/Quantity/TotalPrice не nullable
                 var snapshot = new List<(string Name, decimal UnitPrice, int Qty, decimal Total)>();
                 foreach (var item in cart)
                 {
@@ -91,7 +89,17 @@ namespace WpfApp1337.Pages
                     "Готово", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                 if (res == MessageBoxResult.Yes && File.Exists(pdfPath))
-                    System.Diagnostics.Process.Start(pdfPath);
+                {
+                    // ===============================================================
+                    // ИСПРАВЛЕНО: Используем UseShellExecute = true для открытия файла
+                    // ===============================================================
+                    var processStartInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = pdfPath,
+                        UseShellExecute = true
+                    };
+                    System.Diagnostics.Process.Start(processStartInfo);
+                }
             }
             catch (Exception ex) { Err($"Ошибка:\n{ex.Message}"); }
         }
@@ -135,11 +143,12 @@ namespace WpfApp1337.Pages
 
                 using (var gfx = XGraphics.FromPdfPage(page))
                 {
-                    var fTitle = new XFont("Arial", 20, XFontStyleEx.Bold);
-                    var fHead = new XFont("Arial", 13, XFontStyleEx.Bold);
-                    var fNorm = new XFont("Arial", 11, XFontStyleEx.Regular);
-                    var fSmall = new XFont("Arial", 9, XFontStyleEx.Regular);
-                    var fBig = new XFont("Arial", 16, XFontStyleEx.Bold);
+                    // Используем шрифт, который гарантированно есть в системе
+                    var fTitle = new XFont("Segoe UI", 20, XFontStyleEx.Bold);
+                    var fHead = new XFont("Segoe UI", 13, XFontStyleEx.Bold);
+                    var fNorm = new XFont("Segoe UI", 11, XFontStyleEx.Regular);
+                    var fSmall = new XFont("Segoe UI", 9, XFontStyleEx.Regular);
+                    var fBig = new XFont("Segoe UI", 16, XFontStyleEx.Bold);
 
                     double ml = 40;
                     double pw = page.Width.Point - 80;

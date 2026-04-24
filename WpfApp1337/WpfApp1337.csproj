@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\no_image.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="353439-basket-buy-cart-ecommerce-online-purse-shop-shopping_107515.ico" />
   </ItemGroup>
 
@@ -30,14 +26,16 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
 
     <!-- PDF генерация -->
-    <PackageReference Include="PdfSharp" Version="6.0.0" />
+    <PackageReference Include="PDFsharp-GDI" Version="6.2.4" />
 
     <!-- QR-код -->
     <PackageReference Include="QRCoder" Version="1.4.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\no_image.png" />
+    <None Update="Resources\no_image.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

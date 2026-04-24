@@ -103,17 +103,17 @@
         <DataGrid x:Name="ProductsGrid" Grid.Row="3"
                   Margin="20,12,20,0"
                   AutoGenerateColumns="False" IsReadOnly="True"
-                  CanUserResizeColumns="True" RowHeight="68"
+                  CanUserResizeColumns="True" RowHeight="200"
                   SelectionMode="Single"
                   MouseDoubleClick="OnProductDoubleClick">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID"
                                     Binding="{Binding Id}" Width="55"/>
 
-                <DataGridTemplateColumn Header="Фото" Width="90">
+                <DataGridTemplateColumn Header="Фото">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Border Width="72" Height="58" CornerRadius="4"
+                            <Border Width="auto" Height="auto" CornerRadius="4"
                                     ClipToBounds="True" Background="#F3F4F6"
                                     Margin="8,0">
                                 <Image Stretch="UniformToFill">

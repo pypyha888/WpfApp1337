@@ -10,7 +10,7 @@ using WpfApp1337.ApplicationData;
 
 namespace WpfApp1337.Pages
 {
-    // ── Конвертер пути к изображению ─────────────────────────
+    // ── Конвертер пути к изображению (с заглушкой) ─────────────────────────
     public class ImagePathConverter : IValueConverter
     {
         private static readonly string[] Roots = new[]
@@ -20,38 +20,92 @@ namespace WpfApp1337.Pages
             Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", ".."),
         };
 
+        // Кэшируем заглушку, чтобы не грузить каждый раз
+        private static BitmapImage _placeholderImage;
+
+        private static BitmapImage GetPlaceholderImage()
+        {
+            if (_placeholderImage != null)
+                return _placeholderImage;
+
+            try
+            {
+                // Ищем no_image.jpg в разных местах
+                string[] possiblePaths = {
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "no_image.jpg"),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "no_image.jpg"),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Resources", "no_image.jpg"),
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Resources", "no_image.jpg"),
+                };
+
+                foreach (var path in possiblePaths)
+                {
+                    if (File.Exists(path))
+                    {
+                        _placeholderImage = LoadImage(path);
+                        if (_placeholderImage != null)
+                            return _placeholderImage;
+                    }
+                }
+
+                // Если файл не найден, пробуем найти любой jpg/png в папке Resources
+                string resourcesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources");
+                if (Directory.Exists(resourcesPath))
+                {
+                    var anyImage = Directory.GetFiles(resourcesPath, "*.jpg").FirstOrDefault()
+                                 ?? Directory.GetFiles(resourcesPath, "*.png").FirstOrDefault();
+                    if (anyImage != null && File.Exists(anyImage))
+                    {
+                        _placeholderImage = LoadImage(anyImage);
+                        if (_placeholderImage != null)
+                            return _placeholderImage;
+                    }
+                }
+            }
+            catch { }
+
+            return null;
+        }
+
+        private static BitmapImage LoadImage(string fullPath)
+        {
+            try
+            {
+                var bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.UriSource = new Uri(fullPath, UriKind.Absolute);
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bmp.EndInit();
+                bmp.Freeze();
+                return bmp;
+            }
+            catch { return null; }
+        }
+
         public object Convert(object value, Type targetType,
                               object parameter, CultureInfo culture)
         {
             if (!(value is string path) || string.IsNullOrWhiteSpace(path))
-                return null;
+                return GetPlaceholderImage();
 
             try
             {
                 if (File.Exists(path))
-                    return Load(path);
+                    return LoadImage(path);
 
                 foreach (var root in Roots)
                 {
                     string full = Path.GetFullPath(Path.Combine(root, path));
                     if (File.Exists(full))
-                        return Load(full);
+                        return LoadImage(full);
                 }
-                return null;
+                return GetPlaceholderImage(); // Возвращаем заглушку, если файл не найден
             }
-            catch { return null; }
-        }
-
-        private static BitmapImage Load(string fullPath)
-        {
-            var bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.UriSource     = new Uri(fullPath, UriKind.Absolute);
-            bmp.CacheOption   = BitmapCacheOption.OnLoad;
-            bmp.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bmp.EndInit();
-            bmp.Freeze();
-            return bmp;
+            catch
+            {
+                return GetPlaceholderImage(); // Возвращаем заглушку при ошибке
+            }
         }
 
         public object ConvertBack(object value, Type targetType,
@@ -62,7 +116,7 @@ namespace WpfApp1337.Pages
     // ── Страница каталога ─────────────────────────────────────
     public partial class PageCatalog : Page
     {
-        private bool IsAdmin   => AppConnect.CurrentUser != null && AppConnect.CurrentUser.RoleId == 1;
+        private bool IsAdmin => AppConnect.CurrentUser != null && AppConnect.CurrentUser.RoleId == 1;
         private bool IsManager => AppConnect.CurrentUser != null && AppConnect.CurrentUser.RoleId == 2;
         private bool CanManage => IsAdmin || IsManager;
 
@@ -76,10 +130,10 @@ namespace WpfApp1337.Pages
 
         private void Init()
         {
-            BtnAdd.Visibility      = CanManage ? Visibility.Visible : Visibility.Collapsed;
-            BtnEdit.Visibility     = CanManage ? Visibility.Visible : Visibility.Collapsed;
-            BtnDelete.Visibility   = IsAdmin   ? Visibility.Visible : Visibility.Collapsed;
-            AdminButton.Visibility = IsAdmin   ? Visibility.Visible : Visibility.Collapsed;
+            BtnAdd.Visibility = CanManage ? Visibility.Visible : Visibility.Collapsed;
+            BtnEdit.Visibility = CanManage ? Visibility.Visible : Visibility.Collapsed;
+            BtnDelete.Visibility = IsAdmin ? Visibility.Visible : Visibility.Collapsed;
+            AdminButton.Visibility = IsAdmin ? Visibility.Visible : Visibility.Collapsed;
 
             string role = IsAdmin ? "Администратор" : IsManager ? "Менеджер" : "Покупатель";
             HeaderTextBlock.Text =
@@ -109,7 +163,7 @@ namespace WpfApp1337.Pages
             {
                 var s = SearchBox.Text.ToLower();
                 list = list.Where(x =>
-                    (x.Name  != null && x.Name.ToLower().Contains(s)) ||
+                    (x.Name != null && x.Name.ToLower().Contains(s)) ||
                     (x.Brand != null && x.Brand.ToLower().Contains(s))).ToList();
             }
 
@@ -215,11 +269,11 @@ namespace WpfApp1337.Pages
                 if (ex == null)
                     AppConnect.model01.Cart.Add(new Cart
                     {
-                        ProductId   = p.Id,
+                        ProductId = p.Id,
                         ProductName = p.Name,
-                        UnitPrice   = p.Price,
-                        Quantity    = 1,
-                        UserLogin   = AppConnect.CurrentUser.Login
+                        UnitPrice = p.Price,
+                        Quantity = 1,
+                        UserLogin = AppConnect.CurrentUser.Login
                     });
                 else
                     ex.Quantity++;
@@ -246,7 +300,7 @@ namespace WpfApp1337.Pages
                 {
                     ProductId = p.Id,
                     UserLogin = AppConnect.CurrentUser.Login,
-                    AddedAt   = DateTime.Now
+                    AddedAt = DateTime.Now
                 });
                 AppConnect.model01.SaveChanges();
                 Info($"«{p.Name}» добавлен в избранное!");

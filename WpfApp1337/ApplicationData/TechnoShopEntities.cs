@@ -57,6 +57,9 @@ namespace WpfApp1337.ApplicationData
         public int Quantity { get; set; }
         [MaxLength(1000)] public string? Description { get; set; }
         // Путь к фото товара — храним относительный путь: "Images/product_1.jpg"
+
+
+
         [MaxLength(500)]  public string? ImagePath   { get; set; }
         public int? SupplierId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

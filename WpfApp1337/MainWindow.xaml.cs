@@ -38,10 +38,10 @@ namespace WpfApp1337
             if (e.Content is Autorization)
             {
                 WindowState = WindowState.Normal;
-                Width = 650;
+                Width = 750;
                 Height = 550;
-                MinWidth = 480;
-                MinHeight = 380;
+                MinWidth = 750;
+                MinHeight = 550;
                 WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
             else if (e.Content is PageCatalog || e.Content is PageFavorites || e.Content is PageCart || e.Content is PageProfile || e.Content is PageAdmin)
