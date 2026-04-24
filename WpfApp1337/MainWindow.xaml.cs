@@ -37,6 +37,7 @@ namespace WpfApp1337
         {
             if (e.Content is Autorization)
             {
+                WindowState = WindowState.Normal;
                 Width = 650;
                 Height = 550;
                 MinWidth = 480;
@@ -45,6 +46,7 @@ namespace WpfApp1337
             }
             else if (e.Content is PageCatalog || e.Content is PageFavorites || e.Content is PageCart || e.Content is PageProfile || e.Content is PageAdmin)
             {
+                WindowState = WindowState.Normal;
                 Width = 1300;
                 Height = 750;
                 MinWidth = 900;

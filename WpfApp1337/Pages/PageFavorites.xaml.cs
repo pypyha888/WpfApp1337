@@ -9,7 +9,7 @@ namespace WpfApp1337.Pages
 {
     public partial class PageFavorites : Page
     {
-        private List<Products> _favProducts = new();
+        private List<Products> _favProducts = new List<Products>();
 
         public PageFavorites()
         {
@@ -30,31 +30,29 @@ namespace WpfApp1337.Pages
 
             FavList.ItemsSource = null;
             FavList.ItemsSource = _favProducts;
-            CountBlock.Text = $"⭐ Избранных товаров: {_favProducts.Count}";
+            CountBlock.Text = $"Избранных товаров: {_favProducts.Count}";
         }
 
-        // Удалить из избранного
         private void OnDeleteClick(object sender, RoutedEventArgs e)
         {
             var product = (sender as Button)?.Tag as Products;
             if (product == null) return;
 
             if (MessageBox.Show($"Удалить «{product.Name}» из избранного?",
-                "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question)
-                != MessageBoxResult.Yes) return;
+                "Подтверждение", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes) return;
 
             try
             {
                 var item = AppConnect.model01.Favorites.FirstOrDefault(f =>
                     f.ProductId == product.Id &&
-                    f.UserLogin  == AppConnect.CurrentUser.Login);
+                    f.UserLogin == AppConnect.CurrentUser.Login);
 
                 if (item != null)
                 {
                     AppConnect.model01.Favorites.Remove(item);
                     AppConnect.model01.SaveChanges();
                 }
-
                 LoadFavorites();
             }
             catch (Exception ex)
@@ -64,7 +62,6 @@ namespace WpfApp1337.Pages
             }
         }
 
-        // Добавить в корзину
         private void OnAddToCartClick(object sender, RoutedEventArgs e)
         {
             var product = (sender as Button)?.Tag as Products;
@@ -74,7 +71,7 @@ namespace WpfApp1337.Pages
             {
                 var existing = AppConnect.model01.Cart.FirstOrDefault(c =>
                     c.ProductId == product.Id &&
-                    c.UserLogin  == AppConnect.CurrentUser.Login);
+                    c.UserLogin == AppConnect.CurrentUser.Login);
 
                 if (existing == null)
                     AppConnect.model01.Cart.Add(new Cart
@@ -89,7 +86,6 @@ namespace WpfApp1337.Pages
                     existing.Quantity++;
 
                 AppConnect.model01.SaveChanges();
-
                 MessageBox.Show($"«{product.Name}» добавлен в корзину!",
                     "Готово", MessageBoxButton.OK, MessageBoxImage.Information);
             }

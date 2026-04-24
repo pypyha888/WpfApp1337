@@ -18,25 +18,23 @@ namespace WpfApp1337.Pages
             var u = AppConnect.CurrentUser;
             if (u == null) return;
 
-            // Аватар — первая буква имени
             AvatarBlock.Text = u.UserName.Length > 0
                 ? u.UserName[0].ToString().ToUpper() : "?";
 
             NameBlock.Text  = u.UserName;
             LoginBlock.Text = $"Логин: {u.Login}";
 
-            string roleName = u.RoleId switch
-            {
-                1 => "Администратор",
-                2 => "Менеджер",
-                _ => "Покупатель"
-            };
+            string roleName = u.RoleId == 1 ? "Администратор"
+                            : u.RoleId == 2 ? "Менеджер"
+                            : "Покупатель";
             RoleBlock.Text  = $"Роль: {roleName}";
-            PhoneBlock.Text = string.IsNullOrEmpty(u.Phone) ? "Телефон: не указан" : $"📞 {u.Phone}";
-            EmailBlock.Text = string.IsNullOrEmpty(u.Email) ? "Email: не указан"   : $"✉ {u.Email}";
+
+            PhoneBlock.Text = string.IsNullOrEmpty(u.Phone)
+                ? "Телефон: не указан" : $"Тел: {u.Phone}";
+            EmailBlock.Text = string.IsNullOrEmpty(u.Email)
+                ? "Email: не указан" : u.Email;
             SinceBlock.Text = $"Регистрация: {u.CreatedAt:dd.MM.yyyy}";
 
-            // Заказы текущего пользователя
             var orders = AppConnect.model01.Orders
                 .Where(o => o.UserLogin == u.Login)
                 .OrderByDescending(o => o.OrderDate)
@@ -46,6 +44,8 @@ namespace WpfApp1337.Pages
         }
 
         private void OnBackClick(object sender, RoutedEventArgs e)
-        { if (NavigationService.CanGoBack) NavigationService.GoBack(); }
+        {
+            if (NavigationService.CanGoBack) NavigationService.GoBack();
+        }
     }
 }

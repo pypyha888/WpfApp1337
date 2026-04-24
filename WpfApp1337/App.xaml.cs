@@ -1,18 +1,15 @@
 using System.Windows;
-using PdfSharp.Fonts;
-using WpfApp1337.ApplicationData;
 
 namespace WpfApp1337
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            // Регистрируем FontResolver один раз при старте —
-            // решает ошибку "No appropriate font found for family name"
-            GlobalFontSettings.FontResolver = CustomFontResolver.Instance;
-        }
+        // EF6 не требует FontResolver — PdfSharp используется отдельно
+        // Регистрация FontResolver для PDF если нужно:
+        // protected override void OnStartup(StartupEventArgs e)
+        // {
+        //     base.OnStartup(e);
+        //     PdfSharp.Fonts.GlobalFontSettings.FontResolver = new WpfApp1337.ApplicationData.CustomFontResolver();
+        // }
     }
 }

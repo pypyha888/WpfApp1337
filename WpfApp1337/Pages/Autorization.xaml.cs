@@ -18,19 +18,32 @@ namespace WpfApp1337.Pages
             try
             {
                 if (string.IsNullOrWhiteSpace(txtLogin.Text))
-                { MessageBox.Show("Введите логин!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); txtLogin.Focus(); return; }
+                {
+                    MessageBox.Show("Введите логин!", "Внимание",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtLogin.Focus();
+                    return;
+                }
 
                 if (string.IsNullOrWhiteSpace(txtPassword.Password))
-                { MessageBox.Show("Введите пароль!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); txtPassword.Focus(); return; }
+                {
+                    MessageBox.Show("Введите пароль!", "Внимание",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtPassword.Focus();
+                    return;
+                }
 
                 var user = AppConnect.model01.Users.FirstOrDefault(x =>
-                    x.Login == txtLogin.Text && x.Password == txtPassword.Password);
+                    x.Login == txtLogin.Text &&
+                    x.Password == txtPassword.Password);
 
                 if (user == null)
                 {
                     MessageBox.Show("Неверный логин или пароль!", "Ошибка",
                         MessageBoxButton.OK, MessageBoxImage.Error);
-                    txtPassword.Clear(); txtLogin.Focus(); return;
+                    txtPassword.Clear();
+                    txtLogin.Focus();
+                    return;
                 }
 
                 AppConnect.CurrentUser = user;
@@ -44,6 +57,8 @@ namespace WpfApp1337.Pages
         }
 
         private void btnReg_Click(object sender, RoutedEventArgs e)
-            => AppFrame.frmMain.Navigate(new Reg());
+        {
+            AppFrame.frmMain.Navigate(new Reg());
+        }
     }
 }

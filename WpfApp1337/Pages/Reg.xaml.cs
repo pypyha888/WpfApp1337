@@ -12,12 +12,6 @@ namespace WpfApp1337.Pages
         public Reg()
         {
             InitializeComponent();
-            InitializePage();
-        }
-
-        private void InitializePage()
-        {
-            Loaded += (s, e) => FullNameTextBox.Focus();
             RegisterButton.IsEnabled = false;
         }
 
@@ -25,128 +19,79 @@ namespace WpfApp1337.Pages
         {
             try
             {
-                if (IsLoginAlreadyExists())
+                if (string.IsNullOrWhiteSpace(FullNameTextBox.Text))
+                { MessageBox.Show("Введите имя!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+
+                if (string.IsNullOrWhiteSpace(LoginTextBox.Text))
+                { MessageBox.Show("Введите логин!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+
+                if (AppConnect.model01.Users.Any(x => x.Login == LoginTextBox.Text.Trim()))
+                { MessageBox.Show("Этот логин уже занят!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+
+                if (string.IsNullOrWhiteSpace(PasswordBox.Password))
+                { MessageBox.Show("Введите пароль!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+
+                if (PasswordBox.Password != ConfirmPasswordBox.Password)
+                { MessageBox.Show("Пароли не совпадают!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error); return; }
+
+                if (PasswordBox.Password.Length < 4)
+                { MessageBox.Show("Пароль минимум 4 символа!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+
+                var newUser = new Users
                 {
-                    ShowMessage("Этот логин уже занят!", true);
-                    LoginTextBox.Focus();
-                    LoginTextBox.SelectAll();
-                    return;
-                }
-
-                if (!AreRequiredFieldsFilled()) return;
-
-                if (!DoPasswordsMatch())
-                {
-                    ShowMessage("Пароли не совпадают!", true);
-                    PasswordBox.Focus();
-                    return;
-                }
-
-                if (!ValidateInputData()) return;
-
-                CreateNewUser();
-
-                ShowMessage($"Регистрация успешна! Добро пожаловать, {FullNameTextBox.Text.Trim()}!", false);
-
-                var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.5) };
-                timer.Tick += (ts, te) =>
-                {
-                    timer.Stop();
-                    AppFrame.frmMain.GoBack();
+                    UserName  = FullNameTextBox.Text.Trim(),
+                    Login     = LoginTextBox.Text.Trim(),
+                    Password  = PasswordBox.Password,
+                    RoleId    = 3  // Покупатель
                 };
-                timer.Start();
+
+                AppConnect.model01.Users.Add(newUser);
+                AppConnect.model01.SaveChanges();
+
+                MessageBox.Show("Регистрация успешна!", "Успех",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                NavigateBack();
             }
             catch (Exception ex)
             {
-                ShowMessage($"Ошибка: {ex.Message}", true);
-            }
-        }
-
-        private bool IsLoginAlreadyExists()
-        {
-            return !string.IsNullOrWhiteSpace(LoginTextBox.Text) &&
-                   AppConnect.model01.Users.Any(x => x.Login == LoginTextBox.Text.Trim());
-        }
-
-        private bool AreRequiredFieldsFilled()
-        {
-            if (string.IsNullOrWhiteSpace(FullNameTextBox.Text))
-            {
-                ShowMessage("Введите имя!", true);
-                FullNameTextBox.Focus();
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(LoginTextBox.Text))
-            {
-                ShowMessage("Введите логин!", true);
-                LoginTextBox.Focus();
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(PasswordBox.Password))
-            {
-                ShowMessage("Введите пароль!", true);
-                PasswordBox.Focus();
-                return false;
-            }
-            return true;
-        }
-
-        private bool DoPasswordsMatch() =>
-            PasswordBox.Password == ConfirmPasswordBox.Password;
-
-        private bool ValidateInputData()
-        {
-            if (PasswordBox.Password.Length < 4)
-            {
-                ShowMessage("Пароль должен содержать минимум 4 символа!", true);
-                PasswordBox.Focus();
-                return false;
-            }
-            return true;
-        }
-
-        private void CreateNewUser()
-        {
-            var newUser = new Users()
-            {
-                UserName = FullNameTextBox.Text.Trim(),   // UserName, не Name!
-                Login    = LoginTextBox.Text.Trim(),
-                Password = PasswordBox.Password,
-                RoleId   = 3   // роль User по умолчанию
-            };
-
-            AppConnect.model01.Users.Add(newUser);
-            AppConnect.model01.SaveChanges();
-        }
-
-        private void PasswordBoxes_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            bool match = DoPasswordsMatch();
-
-            if (!match && !string.IsNullOrEmpty(ConfirmPasswordBox.Password))
-            {
-                RegisterButton.IsEnabled = false;
-                ConfirmPasswordBox.Background = System.Windows.Media.Brushes.LightCoral;
-                ConfirmPasswordBox.BorderBrush = System.Windows.Media.Brushes.Red;
-                ConfirmPasswordBox.ToolTip = "Пароли не совпадают!";
-            }
-            else if (match)
-            {
-                RegisterButton.IsEnabled = true;
-                ConfirmPasswordBox.Background = System.Windows.Media.Brushes.LightGreen;
-                ConfirmPasswordBox.BorderBrush = System.Windows.Media.Brushes.Green;
-                ConfirmPasswordBox.ToolTip = "Пароли совпадают!";
+                MessageBox.Show($"Ошибка:\n{ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            if (AppFrame.frmMain.CanGoBack)
-                AppFrame.frmMain.GoBack();
+            NavigateBack();
         }
 
-        private void ShowMessage(string message, bool isError) =>
-            MessageBox.Show(message, isError ? "Ошибка" : "Успех",
-                MessageBoxButton.OK, isError ? MessageBoxImage.Error : MessageBoxImage.Information);
+        private void NavigateBack()
+        {
+            if (AppFrame.frmMain.CanGoBack)
+                AppFrame.frmMain.GoBack();
+            else
+                AppFrame.frmMain.Navigate(new Autorization());
+        }
+
+        private void PasswordBoxes_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (PasswordBox == null || ConfirmPasswordBox == null) return;
+
+            bool match = PasswordBox.Password == ConfirmPasswordBox.Password
+                         && !string.IsNullOrEmpty(ConfirmPasswordBox.Password);
+
+            RegisterButton.IsEnabled = match;
+
+            if (!string.IsNullOrEmpty(ConfirmPasswordBox.Password))
+            {
+                ConfirmPasswordBox.Background = match
+                    ? System.Windows.Media.Brushes.LightGreen
+                    : System.Windows.Media.Brushes.LightCoral;
+            }
+            else
+            {
+                ConfirmPasswordBox.Background = System.Windows.Media.Brushes.White;
+            }
+        }
     }
 }
